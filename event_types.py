@@ -337,8 +337,10 @@ class EventSchema(ma.Schema):
 
 # Types
 
-# Carry
+# EvCarry
 class EvCarry(db.Model):
+    __tablename__ = 'evcarry'
+    
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
     ev_end_loc_x=db.Column(db.Integer,nullable=False)
     ev_end_loc_y=db.Column(db.Integer,nullable=False)
@@ -378,6 +380,8 @@ class EvPass(db.Model):
     ev_type=db.Column(db.String(25))
     ev_outcome=db.Column(db.String(20))
 
+    __tablename__ = 'evpass'
+
     # Relationships
     recipient= db.relationship("Player", foreign_keys=[ev_recipient_id])
     event= db.relationship("Event",foreign_keys=[ev_id])
@@ -413,6 +417,7 @@ class EvBallReceipt(db.Model):
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
     ev_outcome=db.Column(db.String(20))
     
+    __tablename__ = 'evballreceipt'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -430,6 +435,7 @@ class EvPressure(db.Model):
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
     ev_counterpress=db.Column(db.Integer)
 
+    __tablename__ = 'evpressure'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -448,6 +454,7 @@ class EvBallRecovery(db.Model):
     ev_offensive=db.Column(db.Integer)
     ev_recovery_failure=db.Column(db.Integer)
 
+    __tablename__ = 'evballrecovery'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -468,6 +475,7 @@ class EvDuel(db.Model):
     ev_outcome=db.Column(db.String(20))
     ev_counterpress=db.Column(db.Integer)
 
+    __tablename__ = 'evduel'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -488,6 +496,7 @@ class EvClearance(db.Model):
     ev_aerial_won=db.Column(db.Integer)
     ev_body_part=db.Column(db.String(20))
 
+    __tablename__ = 'clearance'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -509,6 +518,7 @@ class EvDribble(db.Model):
     ev_overrun=db.Column(db.Integer)
     ev_no_touch=db.Column(db.Integer)
 
+    __tablename__='evdribble'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -532,6 +542,7 @@ class EvBlock(db.Model):
     ev_offensive=db.Column(db.Integer)
     ev_save_block=db.Column(db.Integer)
 
+    __tablename__='evblock'  
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -554,8 +565,9 @@ class EvGoalkeeper(db.Model):
     ev_technique=db.Column(db.String(20))
     ev_position=db.Column(db.String(20))
     ev_body_part=db.Column(db.String(20))
-    ev_type=db.Column(db.String(20),nullable=False))
+    ev_type=db.Column(db.String(20),nullable=False)
 
+    __tablename__='evgoalkeeper'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
@@ -571,3 +583,254 @@ class EvGoalkeeper(db.Model):
 class EvGoalkeeper(ma.Schema):
     class Meta:
         fields=('ev_id','ev_outcome','ev_technique','ev_position','ev_body_part','ev_type')
+
+# EvMiscontrol 
+class EvMiscontrol(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False) 
+    ev_aerial_won=db.Column(db.Integer)
+
+    __tablename__='evmiscontrol'
+     # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+
+    def __init__(self,ev_id,ev_aerial_won):
+        self.ev_id=ev_id
+        self.ev_aerial_won=ev_aerial_won
+
+# EvMiscontrol Schema
+class EvMiscontrolSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_aerial_won')
+
+# EvFoulCommited
+class EvFoulCommited(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False) 
+    ev_counterpress= db.Column(db.Integer)
+    ev_offensive=db.Column(db.Integer)
+    ev_type=db.Column(db.String(45))
+    ev_advantage=db.Column(db.Integer)
+    ev_penalty=db.Column(db.Integer)
+    ev_card=db.Column(db.String(20))
+
+    __tablename__='evfoulcommited'
+     # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+
+    def __init__(self,ev_id,ev_counterpress,ev_offensive,ev_type,ev_advantage,ev_penalty,ev_card):
+        self.ev_id=ev_id
+        self.ev_counterpress=ev_counterpress
+        self.ev_offensive=ev_offensive
+        self.ev_type=ev_type
+        self.ev_advantage=ev_advantage
+        self.ev_penalty=ev_penalty
+        self.ev_card=ev_card
+
+# EvFoulCommited Schema
+class EvFoulCommitedSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_counterpress','ev_offensive','ev_type','ev_advantage','ev_penalty','ev_card')
+
+# EvDribbledPast
+class EvDribbledPast(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False) 
+    ev_counterpress= db.Column(db.Integer)
+
+    __tablename__='evdribbledpast'
+     # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+
+    def __init__(self,ev_id,ev_counterpress):
+        self.ev_id=ev_id
+        self.ev_counterpress=ev_counterpress
+
+# EvDribbledPast Schema
+class EvDribbledPastSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_counterpress')
+
+# EvFoulWon
+class EvFoulWon(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False) 
+    ev_defensive= db.Column(db.Integer)
+    ev_advantage= db.Column(db.Integer)
+    ev_penalty= db.Column(db.Integer)
+
+    __tablename__='evfoulwon'
+     # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+
+    def __init__(self,ev_id,ev_defensive,ev_advantage,ev_penalty):
+        self.ev_id=ev_id
+        self.ev_defensive=ev_defensive
+        self.ev_advantage=ev_advantage
+        self.ev_penalty=ev_penalty
+
+# EvFoulWon Schema
+class EvFoulWonSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_defensive','ev_advantage','ev_penalty')
+
+# EvShot
+class EvShot(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False) 
+    ev_key_pass_id=db.Column(db.String(45),db.ForeignKey('event.event_id'))
+    ev_end_loc_x=db.Column(db.Integer,nullable=False)
+    ev_end_loc_y=db.Column(db.Integer,nullable=False)
+    ev_end_loc_z=db.Column(db.Integer)
+    ev_aerial_won=db.Column(db.Integer)
+    ev_follows_dribble=db.Column(db.Integer)
+    ev_first_time=db.Column(db.Integer)
+    ev_open_goal=db.Column(db.Integer)
+    ev_deflected=db.Column(db.Integer)
+    ev_technique=db.Column(db.String(20),nullable=False)
+    ev_body_part=db.Column(db.String(20),nullable=False)
+    ev_type=db.Column(db.String(20),nullable=False)
+    ev_outcome=db.Column(db.String(20),nullable=False)
+
+    __tablename__='evshot'
+    # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+    pase= db.relationship("Event",foreign_keys=[ev_key_pass_id])
+
+    def __init__(self,ev_id,ev_key_pass_id,ev_end_loc_x,ev_end_loc_y,ev_end_loc_z,ev_aerial_won,ev_follows_dribble,ev_first_time,ev_open_goal,ev_deflected,ev_technique,ev_body_part,ev_type,ev_outcome):
+        self.ev_id=ev_id
+        self.ev_key_pass_id=ev_key_pass_id
+        self.ev_end_loc_x=ev_end_loc_x
+        self.ev_end_loc_y=ev_end_loc_y
+        self.ev_end_loc_z=ev_end_loc_z
+        self.ev_aerial_won=ev_aerial_won
+        self.ev_follows_dribble=ev_follows_dribble
+        self.ev_first_time=ev_first_time
+        self.ev_open_goal=ev_open_goal
+        self.ev_deflected=ev_deflected
+        self.ev_technique=ev_technique
+        self.ev_body_part=ev_body_part
+        self.ev_type=ev_type
+        self.ev_outcome=ev_outcome
+
+# EvShot Schema
+class EvShotSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_key_pass_id','ev_end_loc_x','ev_end_loc_y','ev_end_loc_z','ev_aerial_won','ev_follows_dribble','ev_first_time','ev_open_goal','ev_deflected','ev_technique','ev_body_part','ev_type','ev_outcome')
+
+# EvInterception 
+class EvInterception(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
+    ev_outcome=db.Column(db.String(20))
+
+    __tablename__='evinterception'
+    # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+
+    def __init__(self,ev_id,ev_outcome):
+        self.ev_id=ev_id
+        self.ev_outcome=ev_outcome
+
+# EvInterception Schema
+class EvInterceptionSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_outcome')
+
+# EvSubstitution 
+class EvSubstitution(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
+    ev_replacement=db.Column(db.String(20),nullable=False)
+    ev_outcome=db.Column(db.String(20),nullable=False)
+
+    __tablename__='evsubstitution'
+    # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+
+    def __init__(self,ev_id,ev_replacement,ev_outcome):
+        self.ev_id=ev_id
+        self.ev_replacement
+        self.ev_outcome=ev_outcome
+
+# EvSubstitution  Schema
+class EvSubstitutionSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_replacement','ev_outcome')
+
+# EvStartingXI
+class EvStartingXI(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
+    ev_match_id=db.Column(db.Integer,db.ForeignKey('match.match_id'),primary_key=True,nullable=False)
+    ev_team_id=db.Column(db.Integer,db.ForeignKey('team.team_id'),nullable=False)
+    ev_formation=db.Column(db.Integer,nullable=False)
+    ev_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),nullable=False)
+    ev_position_id=db.Column(db.Integer,db.ForeignKey('position.position_id'),nullable=False)
+    ev_jersey_number=db.Column(db.Integer,nullable=False)
+
+    __tablename__='evstartingxi'
+
+    # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+    match= db.relationship("Match",foreign_keys=[ev_match_id])
+    team = db.relationship("Team",foreign_keys=[ev_team_id])
+    player= db.relationship("Player",foreign_keys=[ev_player_id])
+    position = db.relationship("Position",foreign_keys=[ev_position_id])
+
+    def __init__(self,ev_id,ev_match_id,ev_team_id,ev_formation,ev_player_id,ev_position_id,ev_jersey_number):
+        self.ev_id=ev_id
+        self.ev_match_id=ev_match_id
+        self.ev_team_id=ev_team_id
+        self.ev_formation=ev_formation
+        self.ev_player_id=ev_player_id
+        self.ev_position_id=ev_position_id
+        self.ev_jersey_number=ev_jersey_number
+
+# EvStartingXI Schema
+class EvStartingXISchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_match_id','ev_team_id','ev_formation','ev_player_id','ev_position_id','ev_jersey_number')
+
+# EvTacticalShift
+class EvTacticalShift(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
+    ev_match_id=db.Column(db.Integer,db.ForeignKey('match.match_id'),primary_key=True,nullable=False)
+    ev_team_id=db.Column(db.Integer,db.ForeignKey('team.team_id'),nullable=False)
+    ev_formation=db.Column(db.Integer,nullable=False)
+    ev_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),nullable=False)
+    ev_position_id=db.Column(db.Integer,db.ForeignKey('position.position_id'),nullable=False)
+    ev_jersey_number=db.Column(db.Integer,nullable=False)
+
+    __tablename__='evtacticalshift'
+
+    # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+    match= db.relationship("Match",foreign_keys=[ev_match_id])
+    team = db.relationship("Team",foreign_keys=[ev_team_id])
+    player= db.relationship("Player",foreign_keys=[ev_player_id])
+    position = db.relationship("Position",foreign_keys=[ev_position_id])
+
+    def __init__(self,ev_id,ev_match_id,ev_team_id,ev_formation,ev_player_id,ev_position_id,ev_jersey_number):
+        self.ev_id=ev_id
+        self.ev_match_id=ev_match_id
+        self.ev_team_id=ev_team_id
+        self.ev_formation=ev_formation
+        self.ev_player_id=ev_player_id
+        self.ev_position_id=ev_position_id
+        self.ev_jersey_number=ev_jersey_number
+
+# EvTacticalShift Schema
+class EvTacticalShiftSchema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_match_id','ev_team_id','ev_formation','ev_player_id','ev_position_id','ev_jersey_number')
+
+# Ev5050
+class Ev5050(db.Model):
+    ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
+    ev_outcome=db.Column(db.String(20),nullable=False)
+
+    __tablename__='ev5050'
+    # Relationships
+    event= db.relationship("Event",foreign_keys=[ev_id])
+
+    def __init__(self,ev_id,ev_outcome):
+        self.ev_id=ev_id
+        self.ev_outcome=ev_outcome
+
+# Ev5050 Schema
+class Ev5050Schema(ma.Schema):
+    class Meta:
+        fields=('ev_id','ev_outcome')

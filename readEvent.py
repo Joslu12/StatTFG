@@ -50,13 +50,17 @@ def readPass(json,event_match_id):
     if 'related_events' in json:
         readEventRelated(ev_id,json['related_events'])
     # Pass Details
-    ev_recipient_id=json['pass']['recipient']['id']
+    ev_recipient_id=None
+    if 'recipient' in json['pass']:
+        ev_recipient_id=json['pass']['recipient']['id']
     ev_length=json['pass']['length']
     ev_angle=json['pass']['angle']
     ev_height=json['pass']['height']['name']
     ev_end_loc_x=json['pass']['end_location'][0]
     ev_end_loc_y=json['pass']['end_location'][1]
-    ev_body_part=json['pass']['body_part']['name']
+    ev_body_part=None
+    if 'body_part' in json:
+        ev_body_part=json['pass']['body_part']['name']
     ev_assisted_shot_id=None
     ev_backheel= None
     ev_deflected=None
@@ -166,8 +170,9 @@ def readBallReceipt(json,event_match_id):
     # BallReceipt Details
     ev_outcome=None
     # Optional
-    if 'outcome' in json['ball_receipt']:
-        ev_outcome=json['ball_receipt']['outcome']['name']
+    if 'ball_receipt' in json:
+        if 'outcome' in json['ball_receipt']:
+            ev_outcome=json['ball_receipt']['outcome']['name']
     # Insert BallReceipt
     new_ball=EvBallReceipt(ev_id,ev_outcome)
     db.session.add(new_ball)
@@ -244,10 +249,11 @@ def readBallRecovery(json,event_match_id):
     # BallRecovery Details
     ev_offensive=None
     ev_recovery=None
-    if 'offensive' in json['ball_recovery']:
-        ev_offensive=1
-    if 'recovery_failure' in json['ball_recovery']:
-        ev_recovery=1
+    if 'ball_recovery' in json:
+        if 'offensive' in json['ball_recovery']:
+            ev_offensive=1
+        if 'recovery_failure' in json['ball_recovery']:
+            ev_recovery=1
     new_reco=EvBallRecovery(ev_id,ev_offensive,ev_recovery)
     db.session.add(new_reco)
     db.session.commit()
@@ -326,10 +332,11 @@ def readClearance(json,event_match_id):
     # Clearance Details
     ev_aerial_won=None
     ev_body_part=None
-    if 'aerial_won' in json['clearance']:
-        ev_aerial_won=1
-    if 'body_part' in json['clearance']:
-        ev_body_part=json['clearance']['body_part']['name']
+    if 'clearance' in json:
+        if 'aerial_won' in json['clearance']:
+            ev_aerial_won=1
+        if 'body_part' in json['clearance']:
+            ev_body_part=json['clearance']['body_part']['name']
     new_clea=EvClearance(ev_id,ev_aerial_won,ev_body_part)
     db.session.add(new_clea)
     db.session.commit()
@@ -411,12 +418,13 @@ def readBlock(json,event_match_id):
     ev_save_block=None
     if 'counterpress' in json:
         ev_counterpress=1
-    if 'deflection' in json['block']:
-        ev_deflection=1
-    if 'offensive' in json['block']:
-        ev_offensive=1
-    if 'save_block' in json['block']:
-        ev_save_block=1
+    if 'block' in json:
+        if 'deflection' in json['block']:
+            ev_deflection=1
+        if 'offensive' in json['block']:
+            ev_offensive=1
+        if 'save_block' in json['block']:
+            ev_save_block=1
     new_block=EvBlock(ev_id,ev_counterpress,ev_deflection,ev_offensive,ev_save_block)
     db.session.add(new_block)
     db.session.commit()
@@ -460,7 +468,7 @@ def readGoalkeeper(json,event_match_id):
         ev_outcome=json['goalkeeper']['outcome']['name']
     if 'technique' in json['goalkeeper']:
         ev_technique=json['goalkeeper']['technique']['name']
-    if 'position' in json['goalkeeper']
+    if 'position' in json['goalkeeper']:
         ev_position=json['goalkeeper']['position']['name']
     if 'body_part' in json['goalkeeper']:
         ev_body_part=json['goalkeeper']['body_part']['name']
@@ -468,8 +476,426 @@ def readGoalkeeper(json,event_match_id):
     db.session.add(new_gk)
     db.session.commit()
 
-
+def readMiscontrol(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # Miscontrol Details
+    ev_aerial_won=None
+    if 'miscontrol' in json:
+        if 'aerial_won' in json['miscontrol']:
+            ev_aerial_won=1
+    new_mc=EvMiscontrol(ev_id,ev_aerial_won)
+    db.session.add(new_mc)
+    db.session.commit()
     
+def readFoulCommited(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    # Foul Commited Details
+    ev_counterpress=None
+    ev_offensive=None
+    ev_type=None
+    ev_advantage=None
+    ev_penalty=None
+    ev_card=None
+    if 'counterpress' in json:
+        ev_counterpress=1
+    if 'advantage' in json['foul_committed']:
+        ev_advantage=1
+    if 'card' in json['foul_commmitted']:
+        ev_card=json['foul_commmitted']['card']['name']
+    if 'offensive' in json['foul_commmitted']:
+        ev_offensive=json['foul_commmitted']['offensive']
+    if 'type' in json['foul_commmitted']:
+        ev_type=json['foul_commmitted']['type']['name']
+    if 'penalty' in json['foul_commmitted']:
+        ev_penalty=json['foul_commmitted']['penalty']
+    new_fc=EvFoulCommited(ev_id,ev_counterpress,ev_offensive,ev_type,ev_advantage,ev_penalty,ev_card)
+    db.session.add(new_fc)
+    db.session.commit()
+
+def readDribbledPast(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # Dribbled Past
+    ev_counterpress=None
+    if 'counterpress' in json:
+        ev_counterpress=1
+    new_db=EvDribbledPast(ev_id,ev_counterpress)
+    db.session.add(new_db)
+    db.session.commit()
+
+def readFoulWon(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # FoulWon Details
+    ev_defensive=None
+    ev_advantage=None
+    ev_penalty=None
+    if 'defensive' in json['foul_won']:
+        ev_defesnive=1
+    if 'advantage' in json['foul_won']:
+        ev_advantage=1
+    if 'penalty' in json['foul_won']:
+        ev_penalty=1
+    new_fw=EvFoulWon(ev_id,ev_defensive,ev_advantage,ev_penalty)
+    db.session.add(new_fw)
+    db.session.commit()
+
+def readShot(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # Shot Details
+    ev_end_loc_x=json['shot']['end_location'][0]
+    ev_end_loc_y=json['shot']['end_location'][1]
+    ev_end_loc_z=None
+    if json['shot']['end_location'][2]:
+        ev_end_loc_z=json['shot']['end_location'][2]
+    ev_technique=json['shot']['technique']['name']
+    ev_type=json['shot']['type']['name']
+    ev_body_part=json['shot']['body_part']['name']
+    ev_outcome=json['shot']['outcome']['name']
+    ev_key_pass_id=None
+    ev_aerial_won=None
+    ev_follows_dribble=None
+    ev_first_time=None
+    ev_open_goal=None
+    ev_deflected=None
+    if 'key_pass_id' in json:
+        ev_key_pass_id=json['key_pass_id']
+    if 'aerial_won' in json['shot']:
+        ev_aerial_won=json['shot']['aerial_won']
+    if 'follows_dribble' in json['shot']:
+        ev_follows_dribble=json['shot']['follows_dribble']
+    if 'first_time' in json['shot']:
+        ev_first_time=json['shot']['first_time']
+    if 'open_goal' in json['shot']:
+        ev_open_goal=json['shot']['open_goal']
+    if 'deflected' in json['shot']:
+        ev_deflected=json['shot']['deflected']
+    new_shot=EvShot(ev_id,ev_key_pass_id,ev_end_loc_x,ev_end_loc_y,ev_end_loc_z,ev_aerial_won,ev_follows_dribble,ev_first_time,ev_open_goal,ev_deflected,ev_technique,ev_body_part,ev_type,ev_outcome)
+    db.session.add(new_shot)
+    db.session.commit()
+
+def readInterception(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # Interception Details
+    ev_outcome= None
+    if 'interception' in json:
+        ev_outcome=json['interception']['outcome']['name']
+    new_in=EvInterception(ev_id,ev_outcome)
+    db.session.add(new_in)
+    db.session.commit()
+
+def readSubstitution(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # Substitution Details
+    ev_replacement=json['substitution']['replacement']['name']
+    ev_outcome=json['substitution']['outcome']['name']
+    new_sb=EvSubstitution(ev_id,ev_replacement,ev_outcome)
+    db.session.add(new_sb)
+    db.session.commit()
+
+def readStartingXI(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # StartingXI Details
+    ev_team=json['team']['id']
+    ev_formation=json['tactics']['formation']
+    ev_lineup=json['tactics']['lineup']
+    for p in ev_lineup:
+        ev_player=ev_lineup['player']['id']
+        ev_position=ev_lineup['position']['id']
+        ev_jersey_number=ev_lineup['jersery_number']
+        new_p=EvStartingXI(ev_id,event_match_id,ev_team,ev_formation,ev_player,ev_position,ev_jersey_number)
+        db.session.add(new_p)
+    db.session.commit()
+
+def readTacticalShift(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # StartingXI Details
+    ev_team=json['team']['id']
+    ev_formation=json['tactics']['formation']
+    ev_lineup=json['tactics']['lineup']
+    for p in ev_lineup:
+        ev_player=ev_lineup['player']['id']
+        ev_position=ev_lineup['position']['id']
+        ev_jersey_number=ev_lineup['jersery_number']
+        new_p=EvTacticalShift(ev_id,event_match_id,ev_team,ev_formation,ev_player,ev_position,ev_jersey_number)
+        db.session.add(new_p)
+    db.session.commit()
+
+def read5050(json,event_match_id):
+    # Create Event
+    ev_id=json['id']
+    index=json['index']
+    period=json['period']
+    timestamp=json['timestamp']
+    minute=json['minute']
+    second=json['second']
+    evtype=json['type']['name']         
+    event_posession=json['possession']
+    event_posession_team=json['possession_team']['id']
+    event_play_pattern=json['play_pattern']['name']
+    event_team_id=json['team']['id']
+    event_player_id=json['player']['id']
+    event_position_id=json['position']['id']
+    event_location_x=json['location'][0]
+    event_location_y=json['location'][1]
+    event_duration=json['duration']
+    event_under_pressure=None
+    event_off_camera=None
+    event_out=None
+    if 'under_pressure' in json:
+        event_under_pressure= 1
+    # Insert Event
+    new_ev=Event(ev_id,event_match_id,index,period,timestamp,minute,second,evtype,event_posession,event_posession_team,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out)
+    db.session.add(new_ev)
+    db.session.commit()
+    if 'related_events' in json:
+        readEventRelated(ev_id,json['related_events'])
+    # 5050 Details
+    ev_outcome= json['50_50']['outcome']['name']
+    new_50=Ev5050(ev_id,ev_outcome)
+    db.session.add(new_50)
+    db.session.commit()
+
+
 def readEventRelated(evid,data):
     for d in data:
         new_evrel=EventRelated(evid,d)
@@ -482,8 +908,7 @@ def readEvent(data):
         if  db.session.query(Match).filter(Match.match_id == event_match_id).first():
             for json in d:
                 ev_id=json['id']
-                print(ev_id)
-                if not db.session.query(Event).filter(Event.event_id == ev_id).first():
+                if  db.session.query(Event).filter(Event.event_id == ev_id).count() == 0:
                     evtype=json['type']['name']
                     if(evtype == 'Pass'): readPass(json,event_match_id)
                     elif(evtype == 'Carry'): readCarry(json,event_match_id)
@@ -492,6 +917,9 @@ def readEvent(data):
                     elif(evtype == 'Ball Recovery'): readBallRecovery(json,event_match_id)
                     elif(evtype == 'Duel'): readDuel(json,event_match_id)
                     elif(evtype == 'Clearance'): readClearance(json,event_match_id)
+                    #elif(evtype == 'Dribble'): readDribble(json,event_match_id)
+                    #elif(evtype == 'Block'): readBlock(json,event_match_id)
+                    #elif(evtype == 'Goalkeeper'): readGoalkeeper(json,event_match_id)
                     else:
                         index=json['index']
                         period=json['period']
