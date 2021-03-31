@@ -298,7 +298,6 @@ class Event(db.Model):
     event_location_y=db.Column(db.Integer)
     event_duration=db.Column(db.Float)
     event_under_pressure=db.Column(db.Integer)
-    event_off_camera=db.Column(db.Integer)
     event_out=db.Column(db.Integer)
 
     # Relantionships
@@ -307,7 +306,7 @@ class Event(db.Model):
     player= db.relationship("Player", foreign_keys=[event_player_id])
     position=db.relationship("Position",foreign_keys=[event_position_id])
     
-    def __init__(self,event_id,event_match_id,event_index,event_period,event_timestamp,event_minute,event_second,event_type,event_posession,event_posession_team_id,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_off_camera,event_out):
+    def __init__(self,event_id,event_match_id,event_index,event_period,event_timestamp,event_minute,event_second,event_type,event_posession,event_posession_team_id,event_play_pattern,event_team_id,event_player_id,event_position_id,event_location_x,event_location_y,event_duration,event_under_pressure,event_out):
         self.event_id=event_id
         self.event_match_id=event_match_id
         self.event_index=event_index
@@ -326,13 +325,12 @@ class Event(db.Model):
         self.event_location_y=event_location_y
         self.event_duration=event_duration
         self.event_under_pressure=event_under_pressure
-        self.event_off_camera=event_off_camera
         self.event_out=event_out
 
 # Event Schema
 class EventSchema(ma.Schema):
     class Meta:
-        fields=('event_id','event_match_id','event_index','event_period','event_timestamp','event_minute','event_second','event_type','event_posession','event_posession_team','event_play_pattern','event_team_id','event_player_id','event_position_id','event_location_x','event_location_y','event_duration','event_under_pressure','event_off_camera','event_out')
+        fields=('event_id','event_match_id','event_index','event_period','event_timestamp','event_minute','event_second','event_type','event_posession','event_posession_team','event_play_pattern','event_team_id','event_player_id','event_position_id','event_location_x','event_location_y','event_duration','event_under_pressure','event_out')
 
 
 # Types
@@ -580,7 +578,7 @@ class EvGoalkeeper(db.Model):
         self.ev_type=ev_type
 
 # EvGoalkeeper Schema
-class EvGoalkeeper(ma.Schema):
+class EvGoalkeeperSchema(ma.Schema):
     class Meta:
         fields=('ev_id','ev_outcome','ev_technique','ev_position','ev_body_part','ev_type')
 
@@ -734,8 +732,8 @@ class EvInterceptionSchema(ma.Schema):
 # EvSubstitution 
 class EvSubstitution(db.Model):
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
-    ev_replacement=db.Column(db.String(20),nullable=False)
-    ev_outcome=db.Column(db.String(20),nullable=False)
+    ev_replacement=db.Column(db.String(20))
+    ev_outcome=db.Column(db.String(20))
 
     __tablename__='evsubstitution'
     # Relationships
@@ -755,10 +753,10 @@ class EvSubstitutionSchema(ma.Schema):
 class EvStartingXI(db.Model):
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
     ev_match_id=db.Column(db.Integer,db.ForeignKey('match.match_id'),primary_key=True,nullable=False)
-    ev_team_id=db.Column(db.Integer,db.ForeignKey('team.team_id'),nullable=False)
-    ev_formation=db.Column(db.Integer,nullable=False)
-    ev_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),nullable=False)
-    ev_position_id=db.Column(db.Integer,db.ForeignKey('position.position_id'),nullable=False)
+    ev_team_id=db.Column(db.Integer,db.ForeignKey('team.team_id'),primary_key=True,nullable=False)
+    ev_formation=db.Column(db.Integer,primary_key=True,nullable=False)
+    ev_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),primary_key=True,nullable=False)
+    ev_position_id=db.Column(db.Integer,db.ForeignKey('position.position_id'),primary_key=True,nullable=False)
     ev_jersey_number=db.Column(db.Integer,nullable=False)
 
     __tablename__='evstartingxi'
@@ -789,9 +787,9 @@ class EvTacticalShift(db.Model):
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
     ev_match_id=db.Column(db.Integer,db.ForeignKey('match.match_id'),primary_key=True,nullable=False)
     ev_team_id=db.Column(db.Integer,db.ForeignKey('team.team_id'),nullable=False)
-    ev_formation=db.Column(db.Integer,nullable=False)
-    ev_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),nullable=False)
-    ev_position_id=db.Column(db.Integer,db.ForeignKey('position.position_id'),nullable=False)
+    ev_formation=db.Column(db.Integer,primary_key=True,nullable=False)
+    ev_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),primary_key=True,nullable=False)
+    ev_position_id=db.Column(db.Integer,db.ForeignKey('position.position_id'),primary_key=True,nullable=False)
     ev_jersey_number=db.Column(db.Integer,nullable=False)
 
     __tablename__='evtacticalshift'
@@ -822,7 +820,7 @@ class Ev5050(db.Model):
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
     ev_outcome=db.Column(db.String(20),nullable=False)
 
-    __tablename__='ev5050'
+    __tablename__='5050'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
 
