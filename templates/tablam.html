@@ -1,0 +1,69 @@
+<tbody>
+  <tr>
+    <td></td>
+    <th>Carrera</th>
+    <th>{{seasonname}}</th>
+    <th>{{matchname.home}}-{{matchname.away}}</th>
+  </tr>
+  <tr>
+    <th>Partidos</th>
+    <td>{{avgj.avgstat_games}}</td>
+    <td>{{avgjs.avgstat_games}}</td>
+    <td>-</td>
+
+  </tr>
+  <tr>
+    <th>Pases intentados</th>
+    <td>{{avgj.avgstat_pas}}</td>
+    <td>{{avgjs.avgstat_pas}}</td>
+    <td>{{passes.Total}}</td>
+  </tr>
+  <tr>
+    <th>Pases acertados</th>
+    <td>{{((avgj.avgstat_goodpass/avgj.avgstat_pas)*100)|round(2)}} %</td>
+    <td>{{((avgjs.avgstat_goodpass/avgjs.avgstat_pas)*100)|round(2)}}%</td>
+    <td>{{(check(passes.Good,passes.Total,1)*100)|round(2)}}%</td>
+  </tr>
+  <tr>
+    <th>Goles</th>
+    <td>{{avgj.avgstat_goal}}</td>
+    <td>{{avgjs.avgstat_goal}}</td>
+    <td>{{shots.Good}}</td>
+  </tr>
+  <tr>
+    <th>Asistencias</th>
+    <td>{{avgj.avgstat_goalassist}}</td>
+    <td>{{avgjs.avgstat_goalassist}}</td>
+    <td>{{passes.Asistencia}}</td>
+  </tr>
+  <tr>
+    <th>Tiros</th>
+    <td>{{avgj.avgstat_shot}}</td>
+    <td>{{avgjs.avgstat_shot}}</td>
+    <td>{{shots.Total}}</td>
+  </tr>
+  <tr>
+    <th>Regates intentados</th>
+    <td>{{avgj.avgstat_dribbles}}</td>
+    <td>{{avgjs.avgstat_dribbles}}</td>
+    <td>{{dribbles.Total}}</td>
+  </tr>
+  <tr>
+    <th>Regates acertados</th>
+    <td>{{((avgj.avgstat_gooddribbles/avgj.avgstat_dribbles)*100)|round(2)}} %</td>
+    <td>{{(check(avgjs.avgstat_gooddribbles,avgjs.avgstat_dribbles,1)*100)|round(2)}}%</td>
+    <td>{{(check(dribbles.Good,dribbles.Total,1)*100)|round(2)}}%</td>
+  </tr>
+  <tr>
+    <th>Recuperaciones</th>
+    <td>{{avgj.avgstat_recoveries}}</td>
+    <td>{{avgjs.avgstat_recoveries}}</td>
+    <td>{{recoveries.Total}}</td>
+  </tr>
+  <tr>
+    <th>Distancia recorrida</th>
+    <td>{{avgj.avgstat_distance}}</td>
+    <td>{{avgjs.avgstat_distance}}</td>
+    <td>{{carry.Distancia}}</td>
+  </tr>
+</tbody>

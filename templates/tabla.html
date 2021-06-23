@@ -1,0 +1,65 @@
+<table  id="tabla" class="table table-dark">
+  <div>
+      <div class="profile-pic-div">
+        <img src="{{avgj.player_photo}}" id="photo"><img>
+      </div>
+    <div class="player-stats-name">
+        <span class="player-stats-name">{{avgj.player_name}}</span>
+    </div>
+  </div>              
+  
+  <tbody>
+    <tr>
+      <th></th>
+      <td>Carrera</td>
+    </tr>
+    <tr>
+      <th>Partidos</th>
+      <td>{{avgj.avgstat_games}}</td>
+    </tr>
+    <tr>
+      <th>Pases intentados</th>
+      <td>{{avgj.avgstat_pas}}</td>
+
+    </tr>
+    <tr>
+      <th>Pases acertados</th>
+      <td>{{((avgj.avgstat_goodpass/avgj.avgstat_pas)*100)|round(2)}} %</td>
+    </tr>
+    <tr>
+      <th>Goles</th>
+      <td>{{avgj.avgstat_goal}}</td>
+
+    </tr>
+    <tr>
+      <th>Asistencias</th>
+      <td>{{avgj.avgstat_goalassist}}</td>
+    </tr>
+    <tr>
+      <th>Tiros</th>
+      <td>{{avgj.avgstat_shot}}</td>
+    </tr>
+    <tr>
+      <th>Regates intentados</th>
+      <td>{{avgj.avgstat_dribbles}}</td>
+    </tr>
+    <tr>
+      <th>Regates acertados</th>
+      <td>{{((avgj.avgstat_gooddribbles/avgj.avgstat_dribbles)*100)|round(2)}} %</td>
+    </tr>
+    <tr>
+      <th>Recuperaciones</th>
+      <td>{{avgj.avgstat_recoveries}}</td>
+
+    </tr>
+    <tr>
+      <th>Distancia recorrida</th>
+      <td>{{avgj.avgstat_distance}}</td>
+
+    </tr>
+  </tbody>
+</table>
+<br><br>
+<img id="chartH" src="{{chartH}}"/>
+<div id="chartm">
+</div>
