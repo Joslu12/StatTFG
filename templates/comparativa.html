@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+       <!-- Bootstrap core JS-->
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+       <!-- SimpleLightbox plugin JS-->
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script type = "text/javascript" 
+         src = "../static/startbootstrap-creative-gh-pages/js/scripts.js" ></script>
+    <link rel="stylesheet" href="../static/startbootstrap-creative-gh-pages/css/styles.css">
+  </head>
+<script type="text/javascript">
+  //document.getElementById("chart1").reload();
+ 
+  
+  function select_season(e){
+    let valor = e.value;
+    let matchs = document.getElementById("matchl");
+    let pid = document.getElementById("busqueda");
+    if(valor != 0){
+      $.ajax({
+      url:"/season",
+      type: "POST",
+      data:{"value":valor, "pid": pid.value},
+      success: function(response){
+        document.getElementById("tabla").style.display = "none";
+        document.getElementById("tablas").style.display = "block";
+        matchs.innerHTML=response.select
+        tablas.innerHTML=response.tablas
+        
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }
+    else{
+      let busqueda = document.getElementById("busqueda")
+      $.ajax({
+      url:"/",
+      type: "POST",
+      data:{"busqueda":busqueda.value},
+      success: function(response){
+        document.open()
+        document.write(response)
+        document.close()
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }
+  }
+
+
+  function select_match(e){
+    let valor = e.value;
+    let season = document.getElementById("seasonl")
+    let pid = document.getElementById("busqueda");
+    if(valor != 0){
+      $.ajax({
+      url:"/match",
+      type: "POST",
+      data:{"value":valor,"season":season.value,"pid":pid.value},
+      success: function(response){
+        document.getElementById("tablas").style.display = "none";
+        document.getElementById("tablam").style.display = "block";
+        tablam.innerHTML=response.tablam
+        chartm.innerHTML=response.chart
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }else{
+        select_season(season)
+        chartm.innerHTML=""
+    }
+  }
+
+
+  function check(a,b){
+    if(a == 0 || b ==0 || a == None || b == None)
+        return 0
+    else
+        return a/b
+  }
+  
+  function show(c){
+    console.log(c)
+    if(c == 1){
+        $.ajax({
+      url:"/listado",
+      type: "POST",
+      success: function(response){
+        document.getElementById("listado").style.display = "block";
+        listado.innerHTML=response
+        document.getElementById("tabla").style.display = "none";
+        document.getElementById("buscador").style.display = "none";
+        document.getElementById("tablas").style.display = "none";
+        document.getElementById("tablam").style.display = "none";
+        document.getElementById("chartH").style.display = "none";
+        tabla.innerHTML=""
+        tablas.innerHTML=""
+        tablam.innerHTML=""
+        chartm.innerHTML=""
+        buscador.innerHTML=""
+        chartH.innerHTML=""
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    } else if(c == 2){
+      $.ajax({
+      url:"/",
+      type: "GET",
+      success: function(response){
+        listado.innerHTML=""
+        document.getElementById("listado").style.display = "none";
+        document.getElementById("buscador").style.display = "block";
+        document.getElementById("tabla").style.display = "block";
+        document.getElementById("tablas").style.display = "block";
+        document.getElementById("tablam").style.display = "block";
+        document.getElementById("chartH").style.display = "block";
+        buscador.innerHTML=response
+      },
+      error: function(error){
+      },
+    });
+
+    }
+    
+  }
+
+  function load(){
+    let p1=document.getElementById("pl")
+    let p2=document.getElementById("p2")
+      $.ajax({
+      url:"/comparativa",
+      type: "POST",
+      data:{"p1":p1.value,"p2":p2.value},
+      success: function(response){
+        wait.innerHTML=response.wait
+        loadChart(p1.value,p2.value)
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+  }
+
+  function loadChart(){
+    console.log("Creando graficas")
+    let p1=document.getElementById("pl")
+    let p2=document.getElementById("p2")
+    console.log("Loading")
+    $.ajax({
+      url:"/chartc",
+      type: "POST",
+      data:{"p1":p1,"p2":p2},
+      success: function(response){
+        wait.innerHTML=""
+        document.open()
+        document.write(response)
+        document.close()
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+  }
+</script>
+  
+    {%if wait%}
+    <script type="text/javascript">
+     loadChart();
+    </script>
+    {% endif %}
+
+
+  
+  <body id="page-top"></body>
+    
+ <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="#page-top">Stats</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/listado" >Listado</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/" >Jugador</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comparativa">Comparativa</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Masthead-->
+    <div class="masthead mx-auto d-block" style="margin-top:100px;" id="header">
+      <div class="container px-4 px-lg-5 text-center" id="buscador">
+        <h1 class=" text-white" >Comparativa de jugadores</h1>
+        <h4 class=" text-white" >Visualiza las diferentes gráficas entre jugadores</h4>
+  {% if not busqueda %}
+  {% set busqueda=""%}
+  {% endif %}
+  <form class="row" role="form" action="" method="post"  enctype="multipart/form-data" style="margin: 0 auto;  width:50%" >
+    <div class="container">
+      
+      <div class="form-group" x-data="{ fileName: '' }">
+        <div class="input-group shadow">
+          <input type="text" class="form-control form-control-lg bg-dark text-white" name="p1" id="p1"  value="{{p1}}" placeholder="Jugador1">
+          <input type="text" class="form-control form-control-lg bg-dark text-white" name="p2" id="p2"  value="{{p2}}" placeholder="Jugador2">
+          <button class="browse btn btn-primary px-4" type="submit" value="submit" x-on:click.prevent="$refs.file.click()"><i class="fas fa-image" onclick=load()></i> Buscar</button>
+        </div>
+      </div>
+    </div>  
+    </form>
+    <div class="center text-center text-white" id=wait>
+    {%if wait%}
+    <h2 class="text-white text-center">Cargando datos gráficos <img src="../static/balon.gif" /></h2>
+    {% endif %}
+    </div>
+    <div id="fail">
+      {%if fail%}
+      <h2 class="text-center text-white">{{fail}}</h2>
+      <h3 class="text-center text-white">Prueba de nuevo con otro nombre</h3>
+      <img src="../static/noresultados.gif"/>
+      {%endif%}
+    </div>
+    <form>
+      
+        
+        <br><br>
+        {% if avgj1 %}
+        
+        <div class="headerVS text-center d-flex" style="justify-content: space-between; align-items: flex-start;">
+          <img id="photo1" style="width:270px; height:270px;"  src="{{photo1}}"/>
+          <div class="d-flex" style="justify-content: space-between;flex: 1;">
+            <h1 class="bg-primary text-dark" style="flex:1;">{{avgj1.player_nickname}}</h1>
+            <h1 class="bg-dark text-white">VS</h1>
+            <h1 class="bg-danger text-dark"style="flex:1;">{{avgj2.player_nickname}}</h1>
+          </div>
+          <img id="photo2" style="width:270px; height:270px;" src="{{photo2}}"/>
+        </div>
+        
+        
+        <br><br>
+        
+        <div class="text-center bg-dark p-5" id="chart">
+          <img id="chart" src="{{chart}}"/>
+          <br><br>
+          <span class="badge badge-pill badge-primary"> {{avgj1.avgstat_games}}</span><span class="text-white">Partidos</span>  <span class="badge badge-pill badge-danger" >{{avgj2.avgstat_games}}</span>
+        <br><br>
+        <span class="badge badge-pill badge-primary"> {{avgj1.avgstat_goal}}</span><span class="text-white">Goles</span>  <span class="badge badge-pill badge-danger" >{{avgj2.avgstat_goal}}</span>
+        <br><br>
+        <span class="badge badge-pill badge-primary"> {{avgj1.avgstat_goalassist}}</span><span class="text-white"> Asistencias </span>  <span class="badge badge-pill badge-danger" >{{avgj2.avgstat_goalassist}}</span>
+        <br><br>
+        <span class="badge badge-pill badge-primary"> {{avgj1.avgstat_pas}}</span><span class="text-white"> Pases intentados </span>  <span class="badge badge-pill badge-danger" >{{avgj2.avgstat_pas}}</span>
+        <br><br>
+        <span class="badge badge-pill badge-primary"> {{((avgj1.avgstat_goodpass/avgj1.avgstat_pas)*100)|round(2)}}%</span><span class="text-white"> Pases acertados </span>  <span class="badge badge-pill badge-danger" >{{((avgj2.avgstat_goodpass/avgj2.avgstat_pas)*100)|round(2)}}%</span>
+        <br><br>
+        <span class="badge badge-pill badge-primary"> {{avgj1.avgstat_shot}}</span><span class="text-white">Tiros </span>  <span class="badge badge-pill badge-danger" >{{avgj2.avgstat_shot}}</span>
+        <br><br>
+        <span class="badge badge-pill badge-primary">{{avgj1.avgstat_dribbles}}  </span><span class="text-white">Regates intentados</span>  <span class="badge badge-pill badge-danger" >{{avgj2.avgstat_dribbles}}</span>
+        <br><br>
+        <span class="badge badge-pill badge-primary"> {{((avgj1.avgstat_gooddribbles/avgj1.avgstat_dribbles)*100)|round(2)}}%</span><span class="text-white"> Regates acertados</span>  <span class="badge badge-pill badge-danger" >{{((avgj2.avgstat_gooddribbles/avgj2.avgstat_dribbles)*100)|round(2)}}%</span>
+        </div>
+        <br><br><br><br>
+        <div class="center text-center text-white" id=>
+          <h1 >Datos relevantes de sus carreras</h1>
+          <div class="row">
+            <h1>Mapa de calor</h1>
+            <div class="col text-white">
+              <h1>{{avgj1.player_nickname}}</h1>
+              <img  src="{{charts1}}"/>
+            </div>
+            <div class="col text-white">
+              <h1>{{avgj2.player_nickname}}</h1>
+              <img  src="{{charts2}}"/>
+            </div>
+          </div>
+          <div class="row">
+            <h1>Zona de disparos</h1>
+            <div class="col text-white">
+              <h1>{{avgj1.player_nickname}}</h1>
+              <img  src="{{shots1}}"/>
+            </div>
+            <div class="col text-white">
+              <h1>{{avgj2.player_nickname}}</h1>
+              <img  src="{{shots2}}"/>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+  </div>
+</div>
+   
+    <!-- Footer-->
+    <footer class="py-5 font-weight-bold"  style="color: #E2B842;">
+        <div class="container px-4 px-lg-5"><div class="small text-center">Copyright &copy; 2021 - José Luis Díaz Martín</div></div>
+    </footer>
+ 
+
+</body>
+</html>
+
+

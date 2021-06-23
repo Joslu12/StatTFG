@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.
+css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600">
+       <!-- Bootstrap core JS-->
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+       <!-- SimpleLightbox plugin JS-->
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script type = "text/javascript" 
+         src = "../static/startbootstrap-creative-gh-pages/js/scripts.js" ></script>
+    <link rel="stylesheet" href="../static/startbootstrap-creative-gh-pages/css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
+    <script src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+    
+  </head>
+<script type="text/javascript">
+  //document.getElementById("chart1").reload();
+ 
+  
+  function select_season(e){
+    let valor = e.value;
+    let matchs = document.getElementById("matchl");
+    let pid = document.getElementById("busqueda");
+    if(valor != 0){
+      $.ajax({
+      url:"/season",
+      type: "POST",
+      data:{"value":valor, "pid": pid.value},
+      success: function(response){
+        document.getElementById("tabla").style.display = "none";
+        document.getElementById("tablas").style.display = "block";
+        matchs.innerHTML=response.select
+        tablas.innerHTML=response.tablas
+        charts.innerHTML=response.charts
+        tablam.innerHTML=""
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }
+    else{
+      let busqueda = document.getElementById("busqueda")
+      $.ajax({
+      url:"/",
+      type: "POST",
+      data:{"busqueda":busqueda.value},
+      success: function(response){
+        document.open()
+        document.write(response)
+        document.close()
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }
+  }
+
+
+  function select_match(e){
+    let valor = e.value;
+    let season = document.getElementById("seasonl")
+    let pid = document.getElementById("busqueda");
+    if(valor != 0){
+      $.ajax({
+      url:"/match",
+      type: "POST",
+      data:{"value":valor,"season":season.value,"pid":pid.value},
+      success: function(response){
+        chartm.innerHTML=""
+        document.getElementById("tablas").style.display = "none";
+        document.getElementById("tablam").style.display = "block";
+        tablam.innerHTML=response.tablam
+        charts.innerHTML=response.matchChart
+        wait.innerHTML=response.wait
+        loadChart(pid,season,valor)
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }else{
+      chartm.innerHTML=""
+      tablam.innerHTML=""
+        select_season(season)
+        
+    }
+  }
+
+  function loadChart(pid,season,match){
+    console.log("Loading")
+    $.ajax({
+      url:"/chart",
+      type: "POST",
+      data:{"value":match,"season":season.value,"pid":pid.value},
+      success: function(response){
+        wait.innerHTML=""
+        chartm.innerHTML=response
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+  }
+
+  function check(a,b){
+    if(a == 0 || b ==0 || a == None || b == None)
+        return 0
+    else
+        return a/b
+  }
+  
+  function show(c){
+    console.log(c)
+    if(c == 1){
+        $.ajax({
+      url:"/listado",
+      type: "POST",
+      success: function(response){
+        document.getElementById("listado").style.display = "block";
+        listado.innerHTML=response
+        document.getElementById("tabla").style.display = "none";
+        document.getElementById("buscador").style.display = "none";
+        document.getElementById("tablas").style.display = "none";
+        document.getElementById("tablam").style.display = "none";
+        document.getElementById("chartH").style.display = "none";
+        tabla.innerHTML=""
+        tablas.innerHTML=""
+        tablam.innerHTML=""
+        chartm.innerHTML=""
+        buscador.innerHTML=""
+        chartH.innerHTML=""
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    } else if(c == 2){
+      $.ajax({
+      url:"/",
+      type: "GET",
+      success: function(response){
+        listado.innerHTML=""
+        document.getElementById("listado").style.display = "none";
+        document.getElementById("buscador").style.display = "block";
+        document.getElementById("tabla").style.display = "block";
+        document.getElementById("tablas").style.display = "block";
+        document.getElementById("tablam").style.display = "block";
+        document.getElementById("chartH").style.display = "block";
+        buscador.innerHTML=response
+      },
+      error: function(error){
+      },
+    });
+
+    }
+    
+  }
+
+
+  function load(){
+    let busqueda = document.getElementById("busqueda")
+    console.log(busqueda)
+      $.ajax({
+      url:"/jugador",
+      type: "POST",
+      data:{"busqueda":busqueda.value},
+      success: function(response){
+        tabla.innerHTML=response
+        chartm.innerHTML=""
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+  }
+
+  var substringMatcher = function(strs) {
+  return function findMatches(q, cb) {
+    var matches, substringRegex;
+
+    // an array that will be populated with substring matches
+    matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    substrRegex = new RegExp(q, 'i');
+
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, function(i, str) {
+      if (substrRegex.test(str)) {
+        matches.push(str);
+      }
+    });
+
+    cb(matches);
+  };
+};
+
+const jugadores = document.getElementById("players");
+
+document.getElementById('busqueda').addEventListener('input', (e)=>{
+    let plArray = [];
+    
+    if(e.target.value){
+        plArray = jugadores.filter(jug => jug.toLowerCase().includes(e.target.value));
+        plArray = plArray.map(jug => `<li>${jug}</li>`)
+    }
+    showFruitsArray(plArray);
+});
+function showplArray(plArray){
+    const html = !plArray.length ? '' : plArray.join('');
+    document.querySelector('ul').innerHTML = html;
+}
+
+const fruits = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
+  'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
+  'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+  'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+  'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+  'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+  'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+];
+
+document.getElementById('search').addEventListener('input', (e)=>{
+    let fruitsArray = [];
+    
+    if(e.target.value){
+        fruitsArray = fruits.filter(fruit => fruit.toLowerCase().includes(e.target.value));
+        fruitsArray = fruitsArray.map(fruit => `<li>${fruit}</li>`)
+    }
+    console.log(fruitsArray)
+    showFruitsArray(fruitsArray);
+});
+function showFruitsArray(fruitsArray){
+    const html = !fruitsArray.length ? '' : fruitsArray.join('');
+    document.querySelector('ul').innerHTML = html;
+}
+$(document).on('focus', '#idLocalNames', function () {
+      var list = [
+          "Test",
+          "Test 2",
+          "Test 4",
+          "Example 1",
+         "Example 2"
+              ];
+      $(this).autocomplete({
+          //source take a list of data
+          source: list,
+          minLength: 1//min = 2 characters
+      });
+  });
+
+  $( function() {
+    var tags = [
+    "Delhi",
+    "Ahemdabad",
+    "Punjab",
+    "Uttar Pradesh",
+    "Himachal Pradesh",
+    "Karnatka",
+    "Kerela",
+    "Maharashtra",
+    "Gujrat",
+    "Rajasthan",
+    "Bihar",
+    "Tamil Nadu",
+    "Haryana"
+  
+  
+      /* Making a list of available tags */
+  
+  
+    ];
+    $( "#tags" ).autocomplete({
+      source: tags
+  
+/* #tthe ags is the id of the input element
+source: tags is the list of available tags*/
+  
+  
+    });
+  } );
+  </script>
+
+  <body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="#page-top">Stats</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/listado" >Listado</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/" >Jugador</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comparativa">Comparativa</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Masthead-->
+    <div class="masthead" style="margin-top:100px;" id="header">
+
+      <div class="container px-4 px-lg-5 text-center" id="buscador">
+        <h1 class="text-white ">Estadísticas de un jugador</h1>
+        <h4 class="text-white">Visualiza todo tipo de estadísticas mediante tablas y gráficas</h4>
+        <input type="hidden" id="players" name="players" value={{players}}>
+  {% if not busqueda %}
+  {% set busqueda=""%}
+  {% endif %}
+  <form class="row" role="form" action="" method="post"  enctype="multipart/form-data" style="margin: 0 auto; width:50%" >
+    <div class="container">
+      
+      <div class="form-group" x-data="{ fileName: '' }">
+        <div class="input-group shadow">
+          <input type="text" class="form-control form-control-lg bg-dark text-white" placeholder="Busqueda de jugador por nombre" name="busqueda" id="busqueda"  value="{{busqueda}}" x-model="fileName">
+          <button class="browse btn btn-primary px-4" type="submit" value="submit" x-on:click.prevent="$refs.file.click()"><i class="fas fa-image"></i> Buscar</button>
+        </div>
+      </div>
+    </div>
+ 
+    
+    </form>
+  <div id="fail">
+    {%if fail%}
+    <h2 class="text-center text-white">{{fail}}</h2>
+    <h3 class="text-center text-white">Prueba de nuevo con otro nombre</h3>
+    <img src="../static/noresultados.gif"/>
+    {%endif%}
+  </div>
+    <form>
+      {% if avgj%}
+      
+        <select class="bg-dark" style="color: #E2B842;" name="seasonl" id="seasonl" onchange="select_season(this)">
+          <option selected value="0">Temporada</option>
+          {% for s in seasonlist %}
+          <option value="{{s[0]}}">{{s[1]}}</option>
+          {% endfor %}
+        </select>  
+  
+    
+        <select class="bg-dark" style="color: #E2B842;" name="matchl" id="matchl" onchange="select_match(this)">
+          <option selected value="0">Partido</option>
+          {% for m in matchlist %}
+          <option value="{{m[0]}}">{{m[1]}}-{{m[2]}}</option>
+          {% endfor %}
+        </select>    
+    </form>
+    <br><br>
+    <div class="d-flex text-center row row-cols-12">
+            
+      <div class="profile-pic-div col-3">
+        <span class="player-stats-name font-italic">{{avgj.player_nickname}}</span>
+        <img src="{{avgj.player_photo}}" id="photo"><img>
+      </div>
+      <div class="col-4">
+        <table  id="tabla" class="table table-dark" style="display: block;">
+                        
+          
+          <tbody>
+            <tr>
+              <th></th>
+              <td>Carrera</td>
+            </tr>
+            <tr>
+              <th>Partidos</th>
+              <td>{{avgj.avgstat_games}}</td>
+            </tr>
+            <tr>
+              <th>Pases intentados</th>
+              <td>{{avgj.avgstat_pas}}</td>
+        
+            </tr>
+            <tr>
+              <th>Pases acertados</th>
+              <td>{{((avgj.avgstat_goodpass/avgj.avgstat_pas)*100)|round(2)}} %</td>
+            </tr>
+            <tr>
+              <th>Goles</th>
+              <td>{{avgj.avgstat_goal}}</td>
+        
+            </tr>
+            <tr>
+              <th>Asistencias</th>
+              <td>{{avgj.avgstat_goalassist}}</td>
+            </tr>
+            <tr>
+              <th>Tiros</th>
+              <td>{{avgj.avgstat_shot}}</td>
+            </tr>
+            <tr>
+              <th>Regates intentados</th>
+              <td>{{avgj.avgstat_dribbles}}</td>
+            </tr>
+            <tr>
+              <th>Regates acertados</th>
+              <td>{{(check(avgj.avgstat_gooddribbles,avgj.avgstat_dribbles,1)*100)|round(2)}} %</td>
+            </tr>
+            <tr>
+              <th>Recuperaciones</th>
+              <td>{{avgj.avgstat_recoveries}}</td>
+        
+            </tr>
+            <tr>
+              <th>Distancia recorrida</th>
+              <td>{{avgj.avgstat_distance}}</td>
+        
+            </tr>
+          </tbody>
+        </table>
+        <table  id="tablas" class="table table-dark" style="display: none;">
+          {% if avgjs %}
+                        
+          <tbody>
+            <tr>
+              <td></td>
+              <th>Carrera</th>
+              <th>{{seasonname}}</th>
+        
+            </tr>
+            <tr>
+              <th>Partidos</th>
+              <td>{{avgj.avgstat_games}}</td>
+        
+              <td>{{avgjs.avgstat_games}}</td>
+        
+              <td>-</td>
+            </tr>
+            <tr>
+              <th>Pases intentados</th>
+              <td>{{avgj.avgstat_pas}}</td>
+              <td>{{avgjs.avgstat_pas}}</td>  
+            </tr>
+            <tr>
+              <th>Pases acertados</th>
+              <td>{{((avgj.avgstat_goodpass/avgj.avgstat_pas)*100)|round(2)}} %</td>
+              <td>{{((avgjs.avgstat_goodpass/avgjs.avgstat_pas)*100)|round(2)}}%</td>
+            </tr>
+            <tr>
+              <th>Goles</th>
+              <td>{{avgj.avgstat_goal}}</td>
+              <td>{{avgjs.avgstat_goal}}</td>
+        
+            </tr>
+            <tr>
+              <th>Asistencias</th>
+              <td>{{avgj.avgstat_goalassist}}</td>
+              <td>{{avgjs.avgstat_goalassist}}</td>
+            </tr>
+            <tr>
+              <th>Tiros</th>
+              <td>{{avgj.avgstat_shot}}</td>
+              <td>{{avgjs.avgstat_shot}}</td>
+            </tr>
+            <tr>
+              <th>Regates intentados</th>
+              <td>{{avgj.avgstat_dribbles}}</td>
+              <td>{{avgjs.avgstat_dribbles}}</td>
+            </tr>
+            <tr>
+              <th>Regates acertados</th>
+              <td>{{(check(avgj.avgstat_gooddribbles,avgj.avgstat_dribbles,1)*100)|round(2)}} %</td>
+              <td>{{((avgjs.avgstat_gooddribbles/avgjs.avgstat_dribbles)*100)|round(2)}}%</td>
+        
+            </tr>
+            <tr>
+              <th>Recuperaciones</th>
+              <td>{{avgj.avgstat_recoveries}}</td>
+              <td>{{avgjs.avgstat_recoveries}}</td>
+            </tr>
+            <tr>
+              <th>Distancia recorrida</th>
+              <td>{{avgj.avgstat_distance}}</td>
+              <td>{{avgjs.avgstat_distance}}</td>
+        
+            </tr>
+          </tbody>
+          {% endif %}
+        </table>
+        <table  id="tablam" class="table table-dark" style="display: none;"> 
+          {% if avgjs %}
+          {% if matchname %}
+          <tbody>
+            <tr>
+              <td></td>
+              <th>Carrera</th>
+              <th>{{seasonname}}</th>
+              <th>{{matchname.home}}-{{matchname.away}}</th>
+            </tr>
+            <tr>
+              <th>Partidos</th>
+              <td>{{avgj.avgstat_games}}</td>
+              <td>{{avgjs.avgstat_games}}</td>
+              <td>-</td>
+      
+            </tr>
+            <tr>
+              <th>Pases intentados</th>
+              <td>{{avgj.avgstat_pas}}</td>
+              <td>{{avgjs.avgstat_pas}}</td>
+              <td>{{passes.Total}}</td>
+            </tr>
+            <tr>
+              <th>Pases acertados</th>
+              <td>{{((avgj.avgstat_goodpass/avgj.avgstat_pas)*100)|round(2)}} %</td>
+              <td>{{((avgjs.avgstat_goodpass/avgjs.avgstat_pas)*100)|round(2)}}%</td>
+              <td>{{(check(passes.Good,passes.Total)*100)|round(2)}}%</td>
+            </tr>
+            <tr>
+              <th>Goles</th>
+              <td>{{avgj.avgstat_goal}}</td>
+              <td>{{avgjs.avgstat_goal}}</td>
+              <td>{{shots.Good}}</td>
+            </tr>
+            <tr>
+              <th>Asistencias</th>
+              <td>{{avgj.avgstat_goalassist}}</td>
+              <td>{{avgjs.avgstat_goalassist}}</td>
+              <td>{{passes.Asistencia}}</td>
+            </tr>
+            <tr>
+              <th>Tiros</th>
+              <td>{{avgj.avgstat_shot}}</td>
+              <td>{{avgjs.avgstat_shot}}</td>
+              <td>{{shots.Total}}</td>
+            </tr>
+            <tr>
+              <th>Regates intentados</th>
+              <td>{{avgj.avgstat_dribbles}}</td>
+              <td>{{avgjs.avgstat_dribbles}}</td>
+              <td>{{dribbles.Total}}</td>
+            </tr>
+            <tr>
+              <th>Regates acertados</th>
+              <td>{{(check(avgj.avgstat_gooddribbles,avgj.avgstat_dribbles,1)*100)|round(2)}} %</td>
+              <td>{{((avgjs.avgstat_gooddribbles/avgjs.avgstat_dribbles)*100)|round(2)}}%</td>
+              <td>{{(check(dribbles.Good,dribbles.Total)*100)|round(2)}}%</td>
+            </tr>
+            <tr>
+              <th>Recuperaciones</th>
+              <td>{{avgj.avgstat_recoveries}}</td>
+              <td>{{avgjs.avgstat_recoveries}}</td>
+              <td>{{recoveries.Total}}</td>
+            </tr>
+            <tr>
+              <th>Distancia recorrida</th>
+              <td>{{avgj.avgstat_distance}}</td>
+              <td>{{avgjs.avgstat_distance}}</td>
+              <td>{{carry.Distancia}}</td>
+            </tr>
+          </tbody>
+          {% endif %}
+          {% endif %}
+        </table>
+      </div>
+    <div class="col-4">
+      <div id="chartH">
+        <img id="chartH" src="{{chartH}}"/>
+      </div>
+      <div id="charts">
+      </div>
+    </div>
+      
+  </div>
+      
+       
+       
+        <br><br>
+        <div class="center text-center text-white" id=wait>
+        </div>
+        <div class="center text-center"> 
+          </div>
+          <div class="row">
+            <div id="chartm">
+            </div>
+          </div>
+        </div>
+        
+        
+        
+        {% endif %}
+  </div>
+</div>
+   <!-- About-->
+   <section class="page-section " id="listado">
+        
+  </section>
+  <!-- Services-->
+  
+  <!-- Portfolio-->
+  <div id="comparativa">
+  </div> 
+    <!-- Footer-->
+    <footer class="py-5 font-weight-bold"  style="color: #E2B842;">
+        <div class="container px-4 px-lg-5"><div class="small text-center">Copyright &copy; 2021 - José Luis Díaz Martín</div></div>
+    </footer>
+ 
+
+</body>
+</html>
+
+

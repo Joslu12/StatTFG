@@ -1,0 +1,35 @@
+        <div class="container px-4 px-lg-5">
+                <h2 class="text-center mt-0">Estadísticas de un jugador</h2>
+                <hr class="divider" />
+                <h1 style="text-align: center">Stats</h1>
+          {% if not busqueda %}
+          {% set busqueda=""%}
+          {% endif %}
+          <form class="row" role="form" action="" method="post"  enctype="multipart/form-data" style="margin: 0 auto; width: 250px;" >
+              <div class="form-group row" >
+                  <div class="col-sm-6">
+                      <input type="inputText" class="form-control" name="busqueda" id="busqueda"  value="{{busqueda}}" placeholder="Busqueda de jugador por nombre">
+                  </div>
+              </div>
+              <div class="form-group text-center">
+                  <button type="submit" value="submit" class="btn btn-success" onclick="load()">Buscar</button>
+              </div>
+            </form>
+            <form>
+                <select name="seasonl" id="seasonl" onchange="select_season(this)">
+                  <option selected value="0">Temporada</option>
+                  {% for s in seasonlist %}
+                  <option value="{{s[0]}}">{{s[1]}}</option>
+                  {% endfor %}
+                </select>  
+          
+            
+                <select name="matchl" id="matchl" onchange="select_match(this)">
+                  <option selected value="0">Partido</option>
+                  {% for m in matchlist %}
+                  <option value="{{m[0]}}">{{m[1]}}-{{m[2]}}</option>
+                  {% endfor %}
+                </select>    
+            </form>
+        </div>          
+      

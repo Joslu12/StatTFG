@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+       <!-- Bootstrap core JS-->
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+       <!-- SimpleLightbox plugin JS-->
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script type = "text/javascript" 
+         src = "../static/startbootstrap-creative-gh-pages/js/scripts.js" ></script>
+    <link rel="stylesheet" href="../static/startbootstrap-creative-gh-pages/css/styles.css">
+  </head>
+
+  
+<script type="text/javascript">
+  //document.getElementById("chart1").reload();
+ 
+  
+  function select_season(e){
+    let valor = e.value;
+    let matchs = document.getElementById("matchl");
+    let pid = document.getElementById("busqueda");
+    if(valor != 0){
+      $.ajax({
+      url:"/season",
+      type: "POST",
+      data:{"value":valor, "pid": pid.value},
+      success: function(response){
+        document.getElementById("tabla").style.display = "none";
+        document.getElementById("tablam").style.display = "none";
+        document.getElementById("tablas").style.display = "block";
+        
+        matchs.innerHTML=response.select
+        tablas.innerHTML=response.tablas
+        tabla.innerHTML=""
+        tablam.innerHTML=""
+        
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }
+    else{
+      let busqueda = document.getElementById("busqueda")
+      $.ajax({
+      url:"/",
+      type: "POST",
+      data:{"busqueda":busqueda.value},
+      success: function(response){
+        document.open()
+        document.write(response)
+        document.getElementById("tabla").style.display = "block";
+        document.getElementById("tablam").style.display = "none";
+        document.getElementById("tablas").style.display = "none";
+        tabla.innerHTML=response
+        document.close()
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }
+  }
+
+
+  function select_match(e){
+    let valor = e.value;
+    let season = document.getElementById("seasonl")
+    let pid = document.getElementById("busqueda");
+    if(valor != 0){
+      $.ajax({
+      url:"/match",
+      type: "POST",
+      data:{"value":valor,"season":season.value,"pid":pid.value},
+      success: function(response){
+        document.getElementById("tablas").style.display = "none";
+        document.getElementById("tablam").style.display = "block";
+        tablam.innerHTML=response.tablam
+        chartm.innerHTML=response.chart
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    }else{
+      chartm.innerHTML=""
+      tablam.innerhtml=""
+      select_season(season)
+        
+    }
+  }
+
+
+  function check(a,b){
+    if(a == 0 || b ==0 || a == None || b == None)
+        return 0
+    else
+        return a/b
+  }
+  
+  function show(c){
+    console.log(c)
+    if(c == 1){
+        $.ajax({
+      url:"/listado",
+      type: "POST",
+      success: function(response){
+        document.getElementById("listado").style.display = "block";
+        listado.innerHTML=response
+        document.getElementById("tabla").style.display = "none";
+        document.getElementById("buscador").style.display = "none";
+        document.getElementById("tablas").style.display = "none";
+        document.getElementById("tablam").style.display = "none";
+        document.getElementById("chartH").style.display = "none";
+        tabla.innerHTML=""
+        tablas.innerHTML=""
+        tablam.innerHTML=""
+        chartm.innerHTML=""
+        buscador.innerHTML=""
+        chartH.innerHTML=""
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+    } else if(c == 2){
+      $.ajax({
+      url:"/",
+      type: "GET",
+      success: function(response){
+        listado.innerHTML=""
+        document.getElementById("listado").style.display = "none";
+        document.getElementById("buscador").style.display = "block";
+        document.getElementById("tabla").style.display = "block";
+        document.getElementById("tablas").style.display = "block";
+        document.getElementById("tablam").style.display = "block";
+        document.getElementById("chartH").style.display = "block";
+        buscador.innerHTML=response
+      },
+      error: function(error){
+      },
+    });
+
+    }
+    
+  }
+
+
+  function load(){
+    let busqueda = document.getElementById("busqueda")
+    console.log(busqueda)
+      $.ajax({
+      url:"/jugador",
+      type: "POST",
+      data:{"busqueda":busqueda.value},
+      success: function(response){
+        tabla.innerHTML=response
+        chartm.innerHTML=""
+      },
+      error: function(error){
+        //console.log(error);
+      },
+    });
+  }
+
+
+  </script>
+  <body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="#page-top">Stats</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/listado" >Listado</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/" >Jugador</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comparativa">Comparativa</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Masthead-->
+    <header class="masthead text-white text-center" id="header">
+      <br><br>
+      <h1 >Listado de jugadores</h1>
+      <h4 >Pulsa sobre la imagen del jugador para obtener más información</h4>
+      <br><br>
+      <div class="row" style="padding-left: 150px;padding-right: 100px;">
+        <h1 >Porteros</h1>
+        {%for p in gk%}
+            <div class="profile-pic-div img__wrap">
+              <a href="/jugador/{{p.player_id}}"><img  title="{{p.player_nickname}}" src="{{p.player_photo}}" id="photo" /></a>
+              <p class="img__description">{{p.player_nickname}}</p>
+            </div>
+        {% endfor %}
+        </div>
+        <div class="row" style="padding-left: 150px;padding-right: 100px;">
+          <h1 >Defensas</h1>
+          {%for p in df%}
+              <div class="profile-pic-div img__wrap">
+                <a href="/jugador/{{p.player_id}}"><img  title="{{p.player_nickname}}" src="{{p.player_photo}}" id="photo" /></a>
+                <p class="img__description">{{p.player_nickname}}</p>
+              </div>
+          {% endfor %}
+          </div>
+          <div class="row" style="padding-left: 150px;padding-right: 100px;">
+            <h1 >Centrocampistas</h1>
+            {%for p in mc%}
+                <div class="profile-pic-div img__wrap">
+                  <a href="/jugador/{{p.player_id}}"><img  title="{{p.player_nickname}}" src="{{p.player_photo}}" id="photo" /></a>
+                  <p class="img__description">{{p.player_nickname}}</p>
+                </div>
+            {% endfor %}
+            </div>
+            <div class="row" style="padding-left: 150px;padding-right: 100px;">
+              <h1>Delanteros</h1>
+              {%for p in dc%}
+                  <div class="profile-pic-div img__wrap">
+                    <a href="/jugador/{{p.player_id}}"><img  title="{{p.player_nickname}}" src="{{p.player_photo}}" id="photo" /></a>
+                    <p class="img__description">{{p.player_nickname}}</p>
+                  </div>
+              {% endfor %}
+              </div>
+    </header>
+
+    <!-- Footer-->
+    <footer class="py-5 font-weight-bold"  style="color: #E2B842;">
+        <div class="container px-4 px-lg-5"><div class="small text-center">Copyright &copy; 2021 - José Luis Díaz Martín</div></div>
+    </footer>
+ 
+
+</body>
+</html>
+
+
