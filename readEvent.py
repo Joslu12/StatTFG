@@ -18,6 +18,17 @@ db = SQLAlchemy(app)
 # Methods
 
 
+def update(json,event_match_id):
+    print("\n Nueva")
+    ev_id=json['id']
+    # Substitution Details
+    ev_replacement=json['substitution']['replacement']['id']
+    ev_outcome=None
+    if 'outcome' in json['substitution']:
+        ev_outcome=json['substitution']['outcome']['name']
+    new_sb=EvSubstitution(ev_id,ev_replacement,ev_outcome)
+    db.session.add(new_sb)
+    db.session.commit()
 
 def readPass(json,event_match_id):
     # Create Event
@@ -809,7 +820,7 @@ def readSubstitution(json,event_match_id):
     if 'related_events' in json:
         readEventRelated(ev_id,json['related_events'])
     # Substitution Details
-    ev_replacement=json['substitution']['replacement']['name']
+    ev_replacement=json['substitution']['replacement']['id']
     ev_outcome=None
     if 'outcome' in json['substitution']:
         ev_outcome=json['substitution']['outcome']['name']
@@ -968,7 +979,7 @@ def readEv(data):
         """
         if(evtype == 'Pass'): readPass(json,event_match_id)
         elif(evtype == 'Carry'): readCarry(json,event_match_id)
-        """
+        
         evtype=json['type']['name']
         event_match_id=json['match_id']
         if(evtype == 'Ball Recovery'): 
@@ -979,6 +990,13 @@ def readEv(data):
                 readBallReceipt(json,event_match_id)
         else:
             pass 
+        """
+        event_match_id=json['match_id']
+        ev_id=json['id']
+        if  db.session.query(Event).filter(Event.event_id == ev_id).count() == 0:
+            readSubstitution(json,event_match_id)
+        else:
+            update(json,event_match_id)
 
 def readEvent(data):
     for json in data:
@@ -1000,7 +1018,8 @@ def readEvent(data):
 
                 """
                 #if(evtype == 'Goal Keeper'): readGoalkeeper(json,event_match_id)
-                if(evtype == 'Pass'): readPass(json,event_match_id)
+                if(evtype == 'Duel'): readDuel(json,event_match_id)
+                elif(evtype == 'Dribble'): readDribble(json,event_match_id)
                 else:
                     pass
     """           
@@ -1061,9 +1080,12 @@ event_data=list()
 
 def readData():
     # Event
-    events=os.listdir("open-data-master/data/events")
-    path="open-data-master/data/events/"
+    #events=os.listdir("open-data-master/data/events")
+    #path="open-data-master/data/events/"
+    events=os.listdir("../a")
+    path="../a/"
     for e in events:
+        print(e)
         with open(path+e,encoding="utf-8") as f:
             current_data= json.load(f)
         n = e[:e.find('.')]
@@ -1072,7 +1094,9 @@ def readData():
         for a in current_data:
             evtype=a['type']['name']
             a['match_id']=n
-            if evtype == 'Ball Recovery' or evtype == 'Ball Receipt*':
+            if evtype == 'Dribble':
+                event_data.append(a)
+            if evtype == 'Duel':
                 event_data.append(a)
             """
             if evtype == 'Pass' or evtype == 'Carry':
@@ -1083,7 +1107,8 @@ def readData():
         """
         #event_data.append(current_data)
         
-        #Completed: Foul Won,Committed,Interception, Ball Receipt,substitution,Tactical shift,Shot,starting,GoalKeeper,Pass,Carry,Pressure
-readData()
-readEv(event_data)
+        #Completed: Foul Won,Committed,Interception, Ball Receipt,substitution,Tactical shift,Shot,starting,GoalKeeper,Pass,Carry,Pressure,BALL RECEIPT,ball recovery
+readData() 
+print("leido")
+readEvent(event_data)
 #readEvent(event_data)

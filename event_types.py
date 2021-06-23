@@ -732,16 +732,17 @@ class EvInterceptionSchema(ma.Schema):
 # EvSubstitution 
 class EvSubstitution(db.Model):
     ev_id=db.Column(db.String(45),db.ForeignKey('event.event_id'),primary_key=True,nullable=False)
-    ev_replacement=db.Column(db.String(20))
+    ev_replacement=db.Column(db.Integer,db.ForeignKey('player.player_id'))
     ev_outcome=db.Column(db.String(20))
 
     __tablename__='evsubstitution'
     # Relationships
     event= db.relationship("Event",foreign_keys=[ev_id])
+    player= db.relationship("Player",foreign_keys=[ev_replacement])
 
     def __init__(self,ev_id,ev_replacement,ev_outcome):
         self.ev_id=ev_id
-        self.ev_replacement
+        self.ev_replacement=ev_replacement
         self.ev_outcome=ev_outcome
 
 # EvSubstitution  Schema
@@ -832,3 +833,223 @@ class Ev5050(db.Model):
 class Ev5050Schema(ma.Schema):
     class Meta:
         fields=('ev_id','ev_outcome')
+
+
+class AvgStat(db.Model):
+    avgstat_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),primary_key=True,nullable=False)
+    avgstat_season_id=db.Column(db.Integer,primary_key=True,nullable=False)
+    avgstat_pas=db.Column(db.Float)
+    avgstat_goodpass=db.Column(db.Float)
+    avgstat_goalassist=db.Column(db.Float)
+    avgstat_shot=db.Column(db.Float)
+    avgstat_goal=db.Column(db.Float)
+    avgstat_shotout=db.Column(db.Float)
+    avgstat_cross=db.Column(db.Float)
+    avgstat_dribbles=db.Column(db.Float)
+    avgstat_gooddribbles=db.Column(db.Float)
+    avgstat_recoveries=db.Column(db.Float)
+    avgstat_runs=db.Column(db.Float)
+    avgstat_avgrun=db.Column(db.Float)
+    avgstat_distance=db.Column(db.Float)
+    avgstat_receipts=db.Column(db.Float)
+    avgstat_goodreceipts=db.Column(db.Float)
+    avgstat_duels=db.Column(db.Float)
+    avgstat_wonduels=db.Column(db.Float)
+    avgstat_fouls=db.Column(db.Float)
+    avgstat_penalties=db.Column(db.Float)
+    avgstat_yellows=db.Column(db.Float)
+    avgstat_reds=db.Column(db.Float)
+    avgstat_foulswon=db.Column(db.Float)
+    avgstat_penaltieswon=db.Column(db.Float)
+    avgstat_gkgoalconceded=db.Column(db.Float)
+    avgstat_gkexits=db.Column(db.Float)
+    avgstat_gkpenalties=db.Column(db.Float)
+    avgstat_gksaves=db.Column(db.Float)
+    avgstat_gksavepenalties=db.Column(db.Float)
+    avgstat_gkpunchs=db.Column(db.Float)
+    avgstat_starts=db.Column(db.Integer,nullable=False)
+    avgstat_games=db.Column(db.Integer,nullable=False)
+    
+
+    __tablename__='avgstat'
+    # Relationships
+    player= db.relationship("Player",foreign_keys=[avgstat_player_id])
+
+    def __init__(self,avgstat_player_id,avgstat_season_id,avgstat_pas,avgstat_goodpass,avgstat_goalassist,avgstat_shot,avgstat_goal,avgstat_shotout,avgstat_cross,avgstat_dribbles,avgstat_gooddribbles,avgstat_recoveries,avgstat_runs,avgstat_avgrun,avgstat_distance,avgstat_receipts,avgstat_goodreceipts,avgstat_duels,avgstat_wonduels,avgstat_fouls,avgstat_penalties,avgstat_yellows,avgstat_reds,avgstat_foulswon,avgstat_penaltieswon,avgstat_gkgoalconceded,avgstat_gkexits,avgstat_gkpenalties,avgstat_gksaves,avgstat_gksavepenalties,avgstat_gkpunchs,avgstat_starts,avgstat_games):
+        self.avgstat_player_id=avgstat_player_id
+        self.avgstat_season_id=avgstat_season_id
+        self.avgstat_pas=avgstat_pas
+        self.avgstat_goodpass=avgstat_goodpass
+        self.avgstat_goalassist=avgstat_goalassist
+        self.avgstat_shot=avgstat_shot
+        self.avgstat_goal=avgstat_goal
+        self.avgstat_shotout=avgstat_shotout
+        self.avgstat_cross=avgstat_cross
+        self.avgstat_dribbles=avgstat_dribbles
+        self.avgstat_gooddribbles=avgstat_gooddribbles
+        self.avgstat_recoveries=avgstat_recoveries
+        self.avgstat_runs=avgstat_runs
+        self.avgstat_avgrun=avgstat_avgrun
+        self.avgstat_distance=avgstat_distance
+        self.avgstat_receipts=avgstat_receipts
+        self.avgstat_goodreceipts=avgstat_goodreceipts
+        self.avgstat_duels=avgstat_duels
+        self.avgstat_wonduels=avgstat_wonduels
+        self.avgstat_fouls=avgstat_fouls
+        self.avgstat_penalties=avgstat_penalties
+        self.avgstat_yellows=avgstat_yellows
+        self.avgstat_reds=avgstat_reds
+        self.avgstat_foulswon=avgstat_foulswon
+        self.avgstat_penaltieswon=avgstat_penaltieswon
+        self.avgstat_gkgoalconceded=avgstat_gkgoalconceded
+        self.avgstat_gkexits=avgstat_gkexits
+        self.avgstat_gkpenalties=avgstat_gkpenalties
+        self.avgstat_gksaves=avgstat_gksaves
+        self.avgstat_gkpunchs=avgstat_gkpunchs
+        self.avgstat_starts=avgstat_starts
+        self.avgstat_games=avgstat_games
+        
+
+class MinStat(db.Model):
+    minstat_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),primary_key=True,nullable=False)
+    minstat_season_id=db.Column(db.Integer,primary_key=True,nullable=False)
+    minstat_pas=db.Column(db.Float)
+    minstat_goodpass=db.Column(db.Float)
+    minstat_goalassist=db.Column(db.Float)
+    minstat_shot=db.Column(db.Float)
+    minstat_goal=db.Column(db.Float)
+    minstat_shotout=db.Column(db.Float)
+    minstat_cross=db.Column(db.Float)
+    minstat_dribbles=db.Column(db.Float)
+    minstat_gooddribbles=db.Column(db.Float)
+    minstat_recoveries=db.Column(db.Float)
+    minstat_runs=db.Column(db.Float)
+    minstat_minrun=db.Column(db.Float)
+    minstat_distance=db.Column(db.Float)
+    minstat_receipts=db.Column(db.Float)
+    minstat_goodreceipts=db.Column(db.Float)
+    minstat_duels=db.Column(db.Float)
+    minstat_wonduels=db.Column(db.Float)
+    minstat_fouls=db.Column(db.Float)
+    minstat_penalties=db.Column(db.Float)
+    minstat_yellows=db.Column(db.Float)
+    minstat_reds=db.Column(db.Float)
+    minstat_foulswon=db.Column(db.Float)
+    minstat_penaltieswon=db.Column(db.Float)
+    minstat_gkgoalconceded=db.Column(db.Float)
+    minstat_gkexits=db.Column(db.Float)
+    minstat_gkpenalties=db.Column(db.Float)
+    minstat_gksaves=db.Column(db.Float)
+    minstat_gksavepenalties=db.Column(db.Float)
+    minstat_gkpunchs=db.Column(db.Float)
+    
+    
+    
+    __tablename__='minstat'
+    # Relationships
+    player= db.relationship("Player",foreign_keys=[minstat_player_id])
+
+    def __init__(self,minstat_player_id,minstat_season_id,minstat_pas,minstat_goodpass,minstat_goalassist,minstat_shot,minstat_goal,minstat_shotout,minstat_cross,minstat_dribbles,minstat_gooddribbles,minstat_recoveries,minstat_runs,minstat_minrun,minstat_distance,minstat_receipts,minstat_goodreceipts,minstat_duels,minstat_wonduels,minstat_fouls,minstat_penalties,minstat_yellows,minstat_reds,minstat_foulswon,minstat_penaltieswon,minstat_gkgoalconceded,minstat_gkexits,minstat_gkpenalties,minstat_gksaves,minstat_gksavepenalties,minstat_gkpunchs):
+        self.minstat_player_id=minstat_player_id
+        self.minstat_season_id=minstat_season_id
+        self.minstat_pas=minstat_pas
+        self.minstat_goodpass=minstat_goodpass
+        self.minstat_goalassist=minstat_goalassist
+        self.minstat_shot=minstat_shot
+        self.minstat_goal=minstat_goal
+        self.minstat_shotout=minstat_shotout
+        self.minstat_cross=minstat_cross
+        self.minstat_dribbles=minstat_dribbles
+        self.minstat_gooddribbles=minstat_gooddribbles
+        self.minstat_recoveries=minstat_recoveries
+        self.minstat_runs=minstat_runs
+        self.minstat_minrun=minstat_minrun
+        self.minstat_distance=minstat_distance
+        self.minstat_receipts=minstat_receipts
+        self.minstat_goodreceipts=minstat_goodreceipts
+        self.minstat_duels=minstat_duels
+        self.minstat_wonduels=minstat_wonduels
+        self.minstat_fouls=minstat_fouls
+        self.minstat_penalties=minstat_penalties
+        self.minstat_yellows=minstat_yellows
+        self.minstat_reds=minstat_reds
+        self.minstat_foulswon=minstat_foulswon
+        self.minstat_penaltieswon=minstat_penaltieswon
+        self.minstat_gkgoalconceded=minstat_gkgoalconceded
+        self.minstat_gkexits=minstat_gkexits
+        self.minstat_gkpenalties=minstat_gkpenalties
+        self.minstat_gksaves=minstat_gksaves
+        self.minstat_gkpunchs=minstat_gkpunchs
+        
+
+class MaxStat(db.Model):
+    maxstat_player_id=db.Column(db.Integer,db.ForeignKey('player.player_id'),primary_key=True,nullable=False)
+    maxstat_season_id=db.Column(db.Integer,primary_key=True,nullable=False)
+    maxstat_pas=db.Column(db.Float)
+    maxstat_goodpass=db.Column(db.Float)
+    maxstat_goalassist=db.Column(db.Float)
+    maxstat_shot=db.Column(db.Float)
+    maxstat_goal=db.Column(db.Float)
+    maxstat_shotout=db.Column(db.Float)
+    maxstat_cross=db.Column(db.Float)
+    maxstat_dribbles=db.Column(db.Float)
+    maxstat_gooddribbles=db.Column(db.Float)
+    maxstat_recoveries=db.Column(db.Float)
+    maxstat_runs=db.Column(db.Float)
+    maxstat_maxrun=db.Column(db.Float)
+    maxstat_distance=db.Column(db.Float)
+    maxstat_receipts=db.Column(db.Float)
+    maxstat_goodreceipts=db.Column(db.Float)
+    maxstat_duels=db.Column(db.Float)
+    maxstat_wonduels=db.Column(db.Float)
+    maxstat_fouls=db.Column(db.Float)
+    maxstat_penalties=db.Column(db.Float)
+    maxstat_yellows=db.Column(db.Float)
+    maxstat_reds=db.Column(db.Float)
+    maxstat_foulswon=db.Column(db.Float)
+    maxstat_penaltieswon=db.Column(db.Float)
+    maxstat_gkgoalconceded=db.Column(db.Float)
+    maxstat_gkexits=db.Column(db.Float)
+    maxstat_gkpenalties=db.Column(db.Float)
+    maxstat_gksaves=db.Column(db.Float)
+    maxstat_gksavepenalties=db.Column(db.Float)
+    maxstat_gkpunchs=db.Column(db.Float)
+    
+    
+    
+    __tablename__='maxstat'
+    # Relationships
+    player= db.relationship("Player",foreign_keys=[maxstat_player_id])
+
+    def __init__(self,maxstat_player_id,maxstat_season_id,maxstat_pas,maxstat_goodpass,maxstat_goalassist,maxstat_shot,maxstat_goal,maxstat_shotout,maxstat_cross,maxstat_dribbles,maxstat_gooddribbles,maxstat_recoveries,maxstat_runs,maxstat_maxrun,maxstat_distance,maxstat_receipts,maxstat_goodreceipts,maxstat_duels,maxstat_wonduels,maxstat_fouls,maxstat_penalties,maxstat_yellows,maxstat_reds,maxstat_foulswon,maxstat_penaltieswon,maxstat_gkgoalconceded,maxstat_gkexits,maxstat_gkpenalties,maxstat_gksaves,maxstat_gksavepenalties,maxstat_gkpunchs):
+        self.maxstat_player_id=maxstat_player_id
+        self.maxstat_season_id=maxstat_season_id
+        self.maxstat_pas=maxstat_pas
+        self.maxstat_goodpass=maxstat_goodpass
+        self.maxstat_goalassist=maxstat_goalassist
+        self.maxstat_shot=maxstat_shot
+        self.maxstat_goal=maxstat_goal
+        self.maxstat_shotout=maxstat_shotout
+        self.maxstat_cross=maxstat_cross
+        self.maxstat_dribbles=maxstat_dribbles
+        self.maxstat_gooddribbles=maxstat_gooddribbles
+        self.maxstat_recoveries=maxstat_recoveries
+        self.maxstat_runs=maxstat_runs
+        self.maxstat_maxrun=maxstat_maxrun
+        self.maxstat_distance=maxstat_distance
+        self.maxstat_receipts=maxstat_receipts
+        self.maxstat_goodreceipts=maxstat_goodreceipts
+        self.maxstat_duels=maxstat_duels
+        self.maxstat_wonduels=maxstat_wonduels
+        self.maxstat_fouls=maxstat_fouls
+        self.maxstat_penalties=maxstat_penalties
+        self.maxstat_yellows=maxstat_yellows
+        self.maxstat_reds=maxstat_reds
+        self.maxstat_foulswon=maxstat_foulswon
+        self.maxstat_penaltieswon=maxstat_penaltieswon
+        self.maxstat_gkgoalconceded=maxstat_gkgoalconceded
+        self.maxstat_gkexits=maxstat_gkexits
+        self.maxstat_gkpenalties=maxstat_gkpenalties
+        self.maxstat_gksaves=maxstat_gksaves
+        self.maxstat_gkpunchs=maxstat_gkpunchs
+        
