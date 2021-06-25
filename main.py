@@ -146,27 +146,23 @@ def comparativa():
             pid2=pi2[0][0]
         else:
             pid2=pi2[0][0]
-        print(pid1)
-        print(pid2)
         avgj1=db.session.execute(f"SELECT * FROM avgstat a JOIN player p ON a.avgstat_player_id=p.player_id WHERE p.player_id = {pid1} AND a.avgstat_season_id = 0 ").first()
         avgj2=db.session.execute(f"SELECT * FROM avgstat a JOIN player p ON a.avgstat_player_id=p.player_id WHERE p.player_id = {pid2} AND a.avgstat_season_id = 0 ").first()
         photo1=db.session.execute(f"SELECT p.player_photo FROM  player p  WHERE p.player_id = {pid1}").first()
         photo2=db.session.execute(f"SELECT p.player_photo FROM  player p  WHERE p.player_id = {pid2}").first()
-        print(photo1)
         seasonlistj1=db.session.execute(f"SELECT DISTINCT c.competition_season_id AS season_id, c.competition_season_name AS season_name from competition c join `match` m on m.match_season_id=c.competition_season_id join evstartingxi e on e.ev_match_id=m.match_id where e.ev_player_id={pid1} GROUP BY e.ev_player_id ORDER BY COUNT(*) DESC").fetchall(),
         seasonlist1=seasonlistj1[0]
         seasonlistj2=db.session.execute(f"SELECT DISTINCT c.competition_season_id AS season_id, c.competition_season_name AS season_name from competition c join `match` m on m.match_season_id=c.competition_season_id join evstartingxi e on e.ev_match_id=m.match_id where e.ev_player_id={pid2} GROUP BY e.ev_player_id ORDER BY COUNT(*) DESC").fetchall(),
         seasonlist2=seasonlistj2[0]
-        print(Path("static/"+str(pid1)+"VS"+str(pid2)+".png").is_file(),datetime.now())
         """
         if (Path("static/"+str(pid1)+"VS"+str(pid2)+".png").is_file()):
             img=mpimg.imread("static/"+str(pid1)+"VS"+str(pid2)+".png")
             s = base64.b64encode(img).decode("utf-8").replace("\n", "")
+            print("entro")
             chart= "data:image/png;base64,%s"%s
         else:
         """
         chart=drawChartComparative(pid1,pid2)
-        
         if Path("static/"+str(pid1)+"heatmapS"+str(seasonlist1[0].season_id)+".png").is_file():
             img_array=plt.imread("static/"+str(pid1)+"heatmapS"+str(seasonlist1[0].season_id)+".png") 
             plt.imshow(img_array)
@@ -228,12 +224,14 @@ def ajaxs():
         avgj=db.session.execute(f"SELECT * FROM avgstat a JOIN player p ON a.avgstat_player_id=p.player_id WHERE  p.player_id = {pid[0]} AND a.avgstat_season_id = 0 ").first()
         avgjs=db.session.execute(f"SELECT * FROM avgstat a JOIN player p ON a.avgstat_player_id=p.player_id WHERE  p.player_id= {pid[0]} AND a.avgstat_season_id = {season} ").first(),
         datos_modificados = db.session.execute(f"SELECT m.match_id, t1.team_name as home, t2.team_name as away from `match` m join team t1 on m.match_home_team_id=t1.team_id join team t2 on t2.team_id=m.match_away_team_id where m.match_season_id={season} and (m.match_home_team_id=217 or m.match_away_team_id=217)").fetchall()
-        if (Path("static/"+str(pid)+"HS"+str(season)+".png").is_file()):
-            img=mpimg.imread("static/"+str(pid)+"match"+str(season)+".png")
+        """
+        if (Path("static/"+str(pid[0])+"HS"+str(season)+".png").is_file()):
+            img=mpimg.imread("static/"+str(pid[0])+"HS"+str(season)+".png")
             s = base64.b64encode(img).decode("utf-8").replace("\n", "")
             chartS= "data:image/png;base64,%s"%s
         else:
-            chartS=drawChartH(pid[0],season)
+            """
+        chartS=drawChartH(pid[0],season)
         
         return jsonify(select=render_template("match.html", matchs=datos_modificados), tablas= render_template('tablas.html',#"tablas.html",
         season=season, avgj=avgj,seasonname=seasonname, avgjs=avgjs[0] ), charts=render_template("charts.html",chartS=chartS)) 
@@ -390,11 +388,11 @@ def drawChartM(pid,season,match):
     maax=[bigger(avgj.avgstat_pas,avgjs.avgstat_pas),bigger(avgj.avgstat_goodpass,avgjs.avgstat_goodpass),bigger(avgj.avgstat_goal,avgjs.avgstat_goal),bigger(avgj.avgstat_goalassist,avgjs.avgstat_goalassist),bigger(avgj.avgstat_shot,avgjs.avgstat_shot),bigger(avgj.avgstat_dribbles,avgjs.avgstat_dribbles),bigger(avgj.avgstat_gooddribbles,avgjs.avgstat_gooddribbles)]
     maxj=[checkNumDen(passes[0].Total,maax[0]), checkNumDen(passes[0].Good,maax[1]), checkNumDen(shots[0].Good,maax[2]), checkNumDen(passes[0].Asistencia,maax[3]), checkNumDen(shots[0].Total,maax[4]),checkNumDen(dribbles[0].Total,maax[5]),checkNumDen(dribbles[0].Good,maax[6])]
     categories= [*categories, categories[0]]
-    stats = [avgj.avgstat_pas/maxj[0], avgj.avgstat_goodpass/maxj[1], avgj.avgstat_goal/maxj[2], avgj.avgstat_goalassist/maxj[3], avgj.avgstat_shot/maxj[4],avgj.avgstat_dribbles/maxj[5],avgj.avgstat_gooddribbles/maxj[6]]
+    stats = [check(avgj.avgstat_pas,maxj[0],1), check(avgj.avgstat_goodpass,maxj[1],1), check(avgj.avgstat_goal,maxj[2],1), check(avgj.avgstat_goalassist,maxj[3],1), check(avgj.avgstat_shot,maxj[4],1),check(avgj.avgstat_dribbles,maxj[5],1),check(avgj.avgstat_gooddribbles,maxj[6],1)]
     stats= [*stats,stats[0]]
-    stats1 =[avgjs.avgstat_pas/maxj[0], avgjs.avgstat_goodpass/maxj[1], avgjs.avgstat_goal/maxj[2], avgjs.avgstat_goalassist/maxj[3], avgjs.avgstat_shot/maxj[4],avgjs.avgstat_dribbles/maxj[5],avgjs.avgstat_gooddribbles/maxj[6]]
+    stats1 = [check(avgjs.avgstat_pas,maxj[0],1), check(avgjs.avgstat_goodpass,maxj[1],1), check(avgjs.avgstat_goal,maxj[2],1), check(avgjs.avgstat_goalassist,maxj[3],1), check(avgjs.avgstat_shot,maxj[4],1),check(avgjs.avgstat_dribbles,maxj[5],1),check(avgjs.avgstat_gooddribbles,maxj[6],1)]
     stats1= [*stats1,stats1[0]]
-    stats2 = [check1(passes[0].Total)/maxj[0], check1(passes[0].Good)/maxj[1], check1(shots[0].Good)/maxj[2], check1(passes[0].Asistencia)/maxj[3], check1(shots[0].Total)/maxj[4],check1(dribbles[0].Total)/maxj[5],check1(dribbles[0].Good)/maxj[6]]
+    stats2 = [check(passes[0].Total,maxj[0],1), check(passes[0].Good,maxj[1],1), check(shots[0].Good,maxj[2],1), check(passes[0].Asistencia,maxj[3],1), check(shots[0].Total,maxj[4],1), check(dribbles[0].Total,maxj[5],1), check(dribbles[0].Good,maxj[6],1)]
     stats2= [*stats2,stats2[0]]
 
 
@@ -752,7 +750,7 @@ def check(a,b,n):
         else:
             return a
     if(n==1):
-        if(a == 0 or b ==0 or a == None or b == None):
+        if(a == 0 or b ==0 or a == None or b == None or b == 0):
             return 0
         else:
             return a/b
@@ -779,6 +777,8 @@ def checkSQL(con):
 app.jinja_env.globals.update(check=check)
 
 def bigger(a,b):
+    a=check1(a)
+    b=check1(b)
     if a>=b:
         return a
     else:
