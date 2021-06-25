@@ -1,6 +1,6 @@
 
 # Despliegue de proyecto
-## Para desplegar el proyecto tendremos que acceder a https://github.com/Joslu12/StatTFGy clonar todo el repositorio. Los siguientes pasos a realizar son:
+## Para desplegar el proyecto tendremos que acceder a https://github.com/Joslu12/StatTFG y clonar todo el repositorio. Los siguientes pasos a realizar son:
 
 * Descomprimir las partes del script de la base de datos, que se tuvo que dividir para subir
 a Github debido a su tamaño.
