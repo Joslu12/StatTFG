@@ -8,7 +8,7 @@ a Github debido a su tamaño.
 * Abrir la carpeta del proyecto en un editor de código, como Visual Studio.
 * Instalar todas las dependencias que se encuentran en el archivo requirements.txt usando
 en la terminal el comando pip install -r requirements.txt
-* Instalar XAMPP si no se dispone del software o uno similar.
+* Instalar *XAMPP* si no se dispone del software o uno similar.
 * Instalar PHPMyAdmin o similar para visualizar el contenido web, si no se dispone de un
 programa que realice dicha función.
 * Iniciar el servidor utilizando programas como XAMPP e iniciar los servidores de Apache y MySQL.
